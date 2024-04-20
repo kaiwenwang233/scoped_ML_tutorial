@@ -13,7 +13,7 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
 
-RUN pip install git+https://github.com/kaiwenwang233/scoped_tutorial.git
+RUN pip install git+https://github.com/kaiwenwang233/scoped_ML_tutorial.git
 
 
 COPY requirements.txt /app
