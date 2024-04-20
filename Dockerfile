@@ -32,4 +32,8 @@ EXPOSE 8888
 
 WORKDIR /app
 # # Run the notebook.
+<<<<<<< HEAD
 #CMD ["jupyter", "notebook", "--port=8888", "--ip=0.0.0.0", "--allow-root"]
+=======
+CMD ["jupyter", "notebook", "--port=8888", "--ip=0.0.0.0", "--allow-root"]
+>>>>>>> 646fdb210cb9763ca99096a06fcabbf5db6a6baf
