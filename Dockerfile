@@ -18,12 +18,13 @@ RUN pip install git+https://github.com/kaiwenwang233/scoped_ML_tutorial.git
 # COPY requirements.txt /app
 
 RUN pip install git+https://github.com/wayneweiqiang/GaMMA.git
-COPY . /app
+COPY . ./app
 
 
 RUN apt update -y && \
-    apt install -y gfortran gdb make && \
-    cd hypoInv/source && \
+    apt install -y gcc gfortran gdb make && \
+    pip install -r ./app/requirements.txt && \
+    cd app/hypoInv/source && \
     make
 
 # Expose the port that the application listens on.
@@ -31,4 +32,4 @@ EXPOSE 8888
 
 WORKDIR /app
 # # Run the notebook.
-CMD ["jupyter", "notebook", "--port=8888", "--ip=0.0.0.0", "--allow-root"]
+#CMD ["jupyter", "notebook", "--port=8888", "--ip=0.0.0.0", "--allow-root"]
