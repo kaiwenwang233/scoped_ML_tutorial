@@ -22,7 +22,7 @@ hyfile.o hylinv.o hylin.o hycre.o hytre.o trvcon.o hydatum.o allsubs.o
 #  allsubs - collection of general subroutines into one file
 #  This is the gfortran version of readq subroutine (no q format)
 
-allsubs.o  :  allsubs.f 
+allsubs.o  :  allsubs.f
 	gfortran -c allsubs.f
 
 #  HYP	   * MAIN HYPOINVERSE PROGRAM.
@@ -107,7 +107,7 @@ hysol.o  :  hysol.for common.inc
 
 #  HYSVD     CANNED SINGLE-VALUE-DECOMPOSITION ROUTINE.
 hysvd.o  :  hysvd.f
-	gfortran -c hysvd.f
+	gfortran -c -fPIE hysvd.f
 
 #  HYTRA   * MANAGE CRUST MODEL CHOICE & AVERAGING.
 hytra.o  :  hytra.for common.inc
