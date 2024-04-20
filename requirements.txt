@@ -4,6 +4,7 @@ kafka-python
 fastapi
 uvicorn
 tqdm
+h5py==3.10.0
 tensorflow
 matplotlib
 numpy>=1.20.0

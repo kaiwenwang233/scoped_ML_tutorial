@@ -1,5 +1,6 @@
 # FROM ghcr.io/seisscoped/container-base:ubuntu22.04_jupyterlab
-FROM python:3.7
+FROM ghcr.io/seisscoped/container-base:centos7_jupyterlab
+# FROM python:3.7
 
 
 # Prevents Python from writing pyc files.
@@ -11,17 +12,6 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# Create a non-privileged user that the app will run under.
-# See https://docs.docker.com/go/dockerfile-user-best-practices/
-# ARG UID=10001
-# RUN adduser \
-#     --disabled-password \
-#     --gecos "" \
-#     --home "/nonexistent" \
-#     --shell "/sbin/nologin" \
-#     --no-create-home \
-#     --uid "${UID}" \
-#     appuser
 
 RUN pip install git+https://github.com/kaiwenwang233/scoped_tutorial.git
 
@@ -30,13 +20,18 @@ COPY requirements.txt /app
 RUN python -m pip install -r requirements.txt
 
 RUN pip install git+https://github.com/wayneweiqiang/GaMMA.git
-
-
-# Copy the source code into the container.
 COPY . ./app
+
+
+RUN yum update -y
+RUN yum install -y gcc-gfortran gdb make 
+WORKDIR /app/hypoInv/source
+RUN make
+
 
 # Expose the port that the application listens on.
 EXPOSE 8888
 
+WORKDIR /app
 # # Run the notebook.
 CMD ["jupyter", "notebook", "--port=8888", "--ip=0.0.0.0", "--allow-root"]
