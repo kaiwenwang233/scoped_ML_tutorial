@@ -27,6 +27,12 @@ RUN apt update -y && \
     cd app/hypoInv/source && \
     make
 
+USER root
+# add all the stuff to change permissions
+RUN mkdir ~/.local && \
+    sudo chmod -R 777 ~/.local && \
+    sudo chmod -R 777 /app
+
 # Expose the port that the application listens on.
 EXPOSE 8888
 
