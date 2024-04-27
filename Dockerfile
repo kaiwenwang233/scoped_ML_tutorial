@@ -29,6 +29,8 @@ RUN apt update -y && \
 
 RUN cd /app && \
     git clone http://github.com/fwaldhauser/HypoDD.git && \
+    mv hypodd_example /app/HypoDD/ && \
+    mv results_hypodd /app/HypoDD/ && \
     cd HypoDD && \
     rm -r example.Amatrice/* && rmdir example.Amatrice &&\
     cd src && \
