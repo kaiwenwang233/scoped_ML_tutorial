@@ -18,14 +18,24 @@ RUN pip install git+https://github.com/kaiwenwang233/scoped_ML_tutorial.git
 # COPY requirements.txt /app
 
 RUN pip install git+https://github.com/wayneweiqiang/GaMMA.git
-COPY . ./app
+COPY . /app
 
 
 RUN apt update -y && \
     apt install -y gcc gfortran gdb make && \
-    pip install -r ./app/requirements.txt && \
-    cd app/hypoInv/source && \
+    pip install -r /app/requirements.txt && \
+    cd /app/hypoInv/source && \
     make
+
+RUN cd /app && \
+    git clone http://github.com/fwaldhauser/HypoDD.git && \
+    cd HypoDD && \
+    rm -r example.Amatrice/* && rmdir example.Amatrice &&\
+    cd src && \
+    make all && \
+    cp ph2dt/ph2dt /usr/bin/ && \
+    cp hypoDD/hypoDD /usr/bin/ && \
+    cp hista2ddsta/hista2ddsta /usr/bin/
 
 USER root
 # add all the stuff to change permissions
