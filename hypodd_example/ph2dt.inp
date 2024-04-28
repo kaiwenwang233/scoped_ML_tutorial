@@ -2,7 +2,7 @@
 * Input station file:
 ./station.dat
 * Input phase file:
-./phase.P4PS6.20161013_20161018
+./phase.P4PS6.20161018
 *MINWGHT: min. pick weight allowed [0]
 *MAXDIST: max. distance in km between event pair and stations [200]
 *MAXSEP: max. hypocentral separation in km [10]
