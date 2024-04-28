@@ -29,15 +29,14 @@ RUN apt update -y && \
 
 RUN cd /app && \
     git clone http://github.com/fwaldhauser/HypoDD.git && \
-    mv hypodd_example /app/HypoDD/ && \
-    mv results_hypodd /app/HypoDD/ && \
     cd HypoDD && \
     rm -r example.Amatrice/* && rmdir example.Amatrice &&\
     cd src && \
     make all && \
     cp ph2dt/ph2dt /usr/bin/ && \
     cp hypoDD/hypoDD /usr/bin/ && \
-    cp hista2ddsta/hista2ddsta /usr/bin/
+    cp hista2ddsta/hista2ddsta /usr/bin/ && \
+    mv /app/HypoDD /app/hypodd/source 
 
 USER root
 # add all the stuff to change permissions
