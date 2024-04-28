@@ -30,7 +30,7 @@ RUN apt update -y && \
 RUN cd /app && \
     git clone http://github.com/fwaldhauser/HypoDD.git && \
     cd HypoDD && \
-    rm -r example.Amatrice/* && rmdir example.Amatrice &&\
+    # rm -r example.Amatrice/* && rmdir example.Amatrice &&\
     cd src && \
     make all && \
     cp ph2dt/ph2dt /usr/bin/ && \
