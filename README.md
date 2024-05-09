@@ -4,6 +4,8 @@ This is a Jupyther Notebook (MLworkflow.ipynb) of SCOPED tutorial for machine le
 
 The notebook includes code and examples to download continuous data, detect and pick phases with PhaseNet, assoicate the phases with GaMMA, locate them with HypoInverse, and relocate the events with HypoDD.
 
+The SCOPED Container page for ML catalog construction is at https://github.com/SeisSCOPED/ml_catalog
+
 ### Links to the packages/functions:
 
 - Data downloaded with ObsPy Mass Downloader fuction (https://docs.obspy.org/packages/obspy.clients.fdsn.html)
