@@ -41,14 +41,18 @@ RUN cd /app && \
     cp hista2ddsta/hista2ddsta /usr/bin/ && \
     mv /app/HypoDD /app/hypodd/source 
 
-# RUN cd /app && \
-#     cd HypoDD && \
-#     cd src && \
-#     make all && \
-#     cp ph2dt/ph2dt /usr/bin/ && \
-#     cp hypoDD/hypoDD /usr/bin/ && \
-#     cp hista2ddsta/hista2ddsta /usr/bin/ && \
-#     mv /app/HypoDD /app/hypodd/source 
+RUN cd /app/cc/preprocess/preprocess && \
+    cp Makefile.Pwaves Makefile && \
+    make && \
+    cp Makefile.Swaves Makefile && \
+    make && \
+    cd ../../correl/correl && \
+    cp Makefile.amatrice.Pwaves Makefile && \
+    make && \
+    cp Makefile.amatrice.Swaves Makefile && \
+    make && \
+    cd ../runs && \
+    cc -o select5 select5.c -lm
 
 USER root
 # add all the stuff to change permissions
