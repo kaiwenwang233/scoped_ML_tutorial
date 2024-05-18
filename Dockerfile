@@ -45,8 +45,8 @@ RUN cd /app/cc/amatrice/preprocess/preprocess && \
     cp Makefile.Pwaves Makefile && \
     make && \
     cp Makefile.Swaves Makefile && \
-    make 
-RUN cd /app/cc/amatrice/correl/correl && \
+    make && \
+    cd /app/cc/amatrice/correl/correl && \
     cp Makefile.amatrice.Pwaves Makefile && \
     make && \
     cp Makefile.amatrice.Swaves Makefile && \
