@@ -1,0 +1,62 @@
+
+Compile programs
+
+cd preprocess/preprocess
+cp Makefile.Pwaves Makefile
+make
+cp Makefile.Swaves Makefile
+make
+
+cd ../../correl/correl
+cp Makefile.amatrice.Pwaves Makefile
+make
+cp Makefile.amatrice.Swaves Makefile
+make
+
+cd ../runs
+cc -o select5 select5.c -lm
+
+cd ../..
+
+put phase file in /data/hy73/dschaff/amatrice/pha.dat
+
+change path of working directory with programs and files
+/data/hy73/dschaff/amatrice/
+change path of waveform cuts directory
+/data/hy73/kw2988/SCOPED/cuts
+
+change these paths in: 
+
+getmseedfiles 
+
+cd preprocess/runs
+
+runpreprocess.chasZ
+runpreprocess.chasH
+preprocess1Z.inp
+preprocess1H.inp
+
+cd correl/runs
+runcorrel9.chasZ
+runcorrel9.chasN
+runcorrel9.chasE
+runselect5
+
+then run:
+
+./getmseedfiles
+./getcat
+
+cd preprocess/runs
+./runpreprocess.chasZ > & outZ &
+./runpreprocess.chasH > & outH &
+
+cd correl/runs
+./runcorrel9.chasZ > & outZ &
+./runcorrel9.chasN > & outN &
+./runcorrel9.chasE > & outE &
+
+./runselect5 > & select.out &
+
+
+

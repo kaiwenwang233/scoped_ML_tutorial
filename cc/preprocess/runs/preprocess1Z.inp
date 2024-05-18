@@ -1,0 +1,6 @@
+* swap bytes flag (1: yes, 0: no)
+  1
+* error log.Z file
+  "/data/hy73/dschaff/amatrice/preprocess/runs/preprocess1.logZ"
+* new stations to preprocess
+  "/data/hy73/dschaff/amatrice/allstas"

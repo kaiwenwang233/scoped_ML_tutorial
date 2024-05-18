@@ -1,0 +1,24 @@
+#! /bin/csh -f
+
+
+#cp /data/ch1/dschaff/nocal/stas.oldsacfiles remainingsta
+
+while 1
+
+date
+set netsta=`head -1 remainingsta` 
+echo $netsta
+echo $netsta > $netsta.sta
+diff $netsta.sta remainingsta | grep '>' | sed -e 's/> //' > tmp
+mv tmp remainingsta
+rm $netsta.sta
+
+
+/data/ch1/dschaff/nocal/programs/preprocess/getoldsachdr/preprocessoldhdr/preprocessoldhdr <<eof
+"$netsta"
+eof
+
+if (`cat remainingsta | wc -l` == 0) break  
+
+
+end

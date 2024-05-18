@@ -1,0 +1,384 @@
+      program preprocess
+
+c --- This program preprocess miniseed files for new events.  Creates
+c --- .hdr file which contains origin time, begin time relative to origin,
+c --- and p-wave travel time.  Uses ncsn.pha.all as origin times and picks
+c --- if available.  Selects subset of events in newids. Expects newfiles
+c --- and newids in each station subdirectory. For multiple processors
+c --- distribute equally netsta subdirectories based on newfiles.  This is 
+c --- better than running program for a single station at a time with a script
+c --- because has to read in ncsn.pha.all for each station then.  Processors
+c --- should finish about the same time because time scales with number of 
+c --- files. This will avoid problem of script crashing too.
+c --- Author: David Schaff <dschaff@ldeo.columbia.edu> 
+c --- Version 1.0 -- 1/21/2011
+
+c need to change log and newstas to be readin.
+
+      	implicit none
+
+   
+	include 'preprocess.inc'
+
+
+c      integer*4 MAXEVE, MAXFILES, MAXSTA, MAXLAY
+
+c      parameter(MAXEVE=500000,MAXFILES=500000,MAXSTA=1000,MAXLAY=20)
+
+
+c instead of deleting comment out
+
+	real		ain	
+      	real		cc
+	real 		cc2
+	real 		ccthr
+      	integer		ct
+       	integer		ct2
+c      	real		data(MAXSAMP,MAXEVE)
+	real 		delta
+	real		depth(MAXEVE)
+	real		depthh
+	character*50 	dir
+	real		dist
+	real 		dt
+	real 		dt2		 
+	character*9 	fil1
+	character*9 	fil2
+	character*100 	file2
+      	character*100	files(MAXEVE)		
+      	character*100 	files1(MAXFILES)
+c      	character*100 	files4(MAXOLDFILES)
+	character*100 	fn_inp
+	character*100 	fn_log
+	character*100 	fn_stas
+	real 		highcorner
+	character*2 	icut
+       	integer		i
+       	integer		ichr
+       	integer		ichr2
+       	integer		id
+       	integer		idy(MAXEVE)
+	integer		idyy
+	integer 	ids(MAXEVE)
+	integer 	ids1(MAXFILES)
+	logical 	ifilter
+       	integer		ihr(MAXEVE)
+	integer		ihrr
+	integer 	iifilter
+	integer 	iiswap 
+       	integer		imn(MAXEVE)
+	integer		imnn
+       	integer		imo(MAXEVE)
+	integer		imoo
+      	integer		ind(MAXEVE)			 
+       	integer		ipick 
+	logical 	iswap
+       	integer		iunit
+	integer		iyr(MAXEVE)
+	integer		iyrr
+       	integer		j
+       	integer		junit
+       	integer		k
+       	integer		kunit
+       	integer		l
+	real 		lag
+	real 		lat(MAXEVE)
+	real		latt
+	real 		lon(MAXEVE)
+	real		lonn
+	real 		lowcorner
+	character*100 	line
+       	integer		lunit
+       	integer		missed
+	character*2 	nettmp
+	integer 	n
+	integer 	nev
+       	integer		nfiles
+       	integer		nfiles1 
+	integer 	nfiles4
+	integer		nl
+	integer 	nlag
+       	integer		npicks
+      	integer		nsamp				
+       	integer 	nsta
+	integer 	nw1
+	integer 	nw2
+	character*1 	phase
+	real 		sec(MAXEVE)
+	real		secc
+	real 		slat(MAXSTA)
+	real		slattmp
+	real 		slon(MAXSTA)
+	real		slontmp
+      	character*8 	sta1(MAXSTA)
+      	character*8 	sta2(MAXSTA)
+      	character*8 	sta3(MAXSTA) 
+c	character*8 	sta4(MAXOLDFILES)
+	character*8 	statmp
+	character*8 	statmp2
+	character*1	strtmp
+c	integer 	system
+	logical		takeid
+	real		t
+	real 		t1	
+	real 		t2
+	real 		tdiff
+	real		tmp
+	real		top(MAXLAY)
+      	real		tref(MAXEVE)			
+      	integer   	trimlen
+	real 		ttp1(MAXEVE,MAXSTA)
+c	real 		ttp2(MAXSTA)
+	real		tttmp
+	real		v(MAXLAY)
+	real 		w1
+	real 		x
+	real 		y
+c      	real		y1(MAXSAMP)
+c	real 		y2(MAXSAMP)		
+	real 		z
+
+
+
+c --- Read in control file
+	write(*,*) 'Enter control file: '
+	read(*,*) fn_inp
+
+
+	print *, fn_inp
+
+
+c --- Loop to read each parameter lines, skipping comments
+	if(1.eq.1) then
+	l=1
+        call freeunit(iunit)
+      	open(iunit,file=fn_inp,status='unknown')
+12       read (iunit,'(a)',end=13) line
+      	if (line(1:1).eq.'*' .or. line(2:2).eq.'*') goto 12
+      	if (l.eq.1) read (line,*,err=890) iiswap
+      	if (l.eq.2) read (line,*,err=890) fn_log
+      	if (l.eq.3) read (line,*,err=890) fn_stas
+      	l= l+1
+      	goto 12
+13   	close (iunit)
+	endif
+
+	print *, iiswap
+	print *, fn_log
+	print *, fn_stas
+
+
+c --- open error log file
+        call freeunit(lunit)
+      	open(lunit,file=fn_log,status='unknown')
+
+c --- Read in velocity model
+	print *, 'Read in velocity model...'
+        call freeunit(iunit)
+      	open(iunit,file='../velmodS',status='unknown')
+	i=1
+70	read(iunit,*,err=897,end=80) v(i),top(i)
+	i=i+1
+	goto 70
+80	nl=i-1
+	close(iunit)
+
+c --- Read in ids to preprocess
+	print *, 'Read in ids to preprocess...'
+        call freeunit(iunit)
+      	open(iunit,file='../newids',status='unknown')
+	i=1
+16	if(i.gt.MAXEVE) goto 703
+	read(iunit,*,end=17,err=891) ids(i)
+	i=i+1
+	goto 16
+17	nev=i-1
+	close(iunit)
+
+
+c --- Read in stations to preprocess
+	print *, 'Read in stations to preprocess...'
+        call freeunit(iunit)
+      	open(iunit,file=fn_stas,status='unknown')
+	i=1
+10	if(i.gt.MAXSTA) goto 704
+	read(iunit,'(a)',end=20,err=892) sta3(i)
+	i=i+1
+	goto 10
+20	nsta=i-1
+	close(iunit)
+
+c --- Read in station file
+	print *, 'Read in station file...'
+        call freeunit(iunit)
+      	open(iunit,file='../stas.loc',status='unknown')
+	i=1
+50	read(iunit,*,err=896,end=60) statmp,slattmp,slontmp
+	  do j=1,nsta
+            if(statmp.eq.sta3(j)) then
+	      slat(j)=slattmp
+	      slon(j)=slontmp
+	      goto 50
+ 	    endif
+	  enddo
+	goto 50
+60	close(iunit)
+	
+
+	do l=1,MAXEVE
+	 do j=1,nsta
+	   ttp1(l,j)=-12345.
+	 enddo
+	enddo
+
+c --- Read in new phase data
+	print *, 'Read in new phase data...'
+	l=1
+        call freeunit(iunit)
+      	open(iunit,file='../pha.dat',status='unknown')
+14       read (iunit,'(a)',end=15) line
+      	if (line(1:1).eq.'#') then
+	  read (line,*,err=893) strtmp,iyrr,imoo,idyy,
+     & 		ihrr,imnn,secc,latt,lonn,depthh,
+     & 		tmp,tmp,tmp,tmp,id
+      	  do l=1,nev
+	    if(id.eq.ids(l)) then
+	      	takeid=.true.
+		iyr(l)=iyrr
+		imo(l)=imoo
+		idy(l)=idyy
+		ihr(l)=ihrr
+		imn(l)=imnn
+		sec(l)=secc
+		lat(l)=latt
+		lon(l)=lonn
+		depth(l)=depthh
+c		print *, id, iyrr, imoo
+		goto 14
+	    else
+	      	takeid=.false.
+	    endif
+	  enddo
+	  goto 14
+	endif
+	read (line,*,err=893) statmp,tttmp,tmp,phase,strtmp
+	if(phase.eq.'S' .and. takeid) then
+	 statmp2=statmp(1:2)//'.'//statmp(3:trimlen(statmp))
+	  do j=1,nsta
+            if(statmp2.eq.sta3(j)) then
+	      ttp1(l,j)=tttmp
+c	print *, statmp2, sta3(j), l, j, tttmp, ttp1(l,j)
+	      goto 14
+ 	    endif
+	  enddo
+	endif
+      	goto 14
+15   	close (iunit)
+	
+
+	if(iiswap.eq.1) then
+	  iswap=.true.
+	elseif(iiswap.eq.0) then
+	  iswap=.false.	
+	else
+	  goto 700
+	endif	
+
+c --- Loop over stations
+	print *, 'updating headers with travel times for new events...'
+
+	do l=1,nsta
+
+	write(*,*) sta3(l)(1:trimlen(sta3(l)))
+
+        call freeunit(iunit)
+	file2 = sta3(l)(1:trimlen(sta3(l)))//'/newfiles'
+      	open(iunit,file=file2,status='unknown')
+	i=1
+11	if(i.gt.MAXFILES) goto 705
+	read(iunit,'(a)',end=21,err=894) files1(i)
+c	call parsedot(files1(i),100,ichr)
+c	call parsedot(files1(i)(ichr+4:ichr+9),10,ichr2)
+c	sta1(i)=files1(i)(ichr+1:ichr+4+ichr2-2)
+	i=i+1
+	goto 11
+21	nfiles1=i-1
+	close(iunit)
+
+        call freeunit(iunit)
+	file2 = sta3(l)(1:trimlen(sta3(l)))//'/newids'
+      	open(iunit,file=file2,status='unknown')
+	i=1
+30	if(i.gt.MAXFILES) goto 705
+	read(iunit,*,end=40,err=894) ids1(i)
+	i=i+1
+	goto 30
+40	close(iunit)
+	
+
+
+c --- get picks for waveforms
+	do j=1,nfiles1
+	 do i=1,nev
+           if(ids(i).eq.ids1(j)) then
+	     if(ttp1(i,l).eq.-12345.) then
+	       call convert(lat(i),lon(i),depth(i),slat(l),slon(l),0.,
+     &  	x,y,z,0)
+	       dist=sqrt(x**2+y**2)
+ 	       call ttime(dist, depth(i), nl, v, top, t, ain)
+	       ttp1(i,l)=t
+	     endif
+	file2 = sta3(l)(1:trimlen(sta3(l)))// '/' //files1(j)
+        print *, file2,iyr(i),imo(i),idy(i),ihr(i)
+        print *, imn(i),sec(i),ttp1(i,l),iswap,lunit 
+	call updatemseedheader(file2,iyr(i),imo(i),idy(i),ihr(i),
+     &  			imn(i),sec(i),ttp1(i,l),iswap,lunit)
+	   endif
+	 enddo
+	enddo
+
+	close(lunit)
+
+	enddo  ! 	do l=1,nsta
+
+	close(lunit)
+
+	goto 1000
+
+c --- Error handling
+
+700	write(*,*) 'Swap flag must be 1 or 0 '
+	stop
+701	write(*,*) 'Filter flag must be 1 or 0 '
+	stop
+
+703	write(*,*) 'Too many lines in newids, Increase MAXEVE.'
+	stop
+704	write(*,*) 'Too many lines in newstas, Increase MAXSTA.'
+	stop
+705	write(*,*) 'Too many lines in ' , file2(1:trimlen(file2)) 
+	write(*,*) ' Increase MAXFILES.'
+	stop
+
+
+890	write(*,*) 'Error reading preprocess.inp '
+	stop
+891	write(*,*) 'Error reading newids '
+	stop
+892	write(*,*) 'Error reading newstas '
+	stop
+893	write(*,*) 'Error reading ncsn.pha.all '
+	stop
+894	write(*,*) 'Error reading ', file2(1:trimlen(file2))
+	stop
+895	write(*,*) 'Error reading newpicks '
+	stop
+896	write(*,*) 'Error reading stas.loc '
+	stop
+897	write(*,*) 'Error reading velmod '
+	stop
+898	write(*,*) 'Error reading new.id '
+	stop
+
+      
+1000      end

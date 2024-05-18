@@ -1,0 +1,39 @@
+#! /bin/csh -f
+
+# can't run on hypo-nas, needs to run on hypo-2, in a csh, takes awhile to read in phase file
+
+# nohup ./runpreprocess1 > & out1 &
+
+#cd /data/hy73/kw2988/LCSN/cuts 
+date
+
+cd /data/hy73/dschaff/amatrice
+cp allstas chasZ chasH velmodP velmodS pha.dat newids stas.loc /data/hy73/kw2988/SCOPED/
+cd /data/hy73/kw2988/SCOPED/cuts
+
+foreach cha ( `cat ../chasH` )
+
+foreach s ( `cat ../allstas` )
+
+
+cd $s
+cp mseedfiles.$cha mseedfiles
+cp mseedfiles.$cha newfiles
+
+cp ids.$cha ids
+cp ids.$cha newids
+cd ..
+end
+
+
+set p1 = /data/hy73/dschaff/amatrice/preprocess/preprocess
+set p2 = /data/hy73/dschaff/amatrice/preprocess/runs
+
+$p1/preprocess.Swaves <<eof
+"$p2/preprocess1H.inp"
+eof
+
+end
+
+echo "Done processing"
+date

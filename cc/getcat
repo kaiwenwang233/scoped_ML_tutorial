@@ -1,0 +1,11 @@
+
+#! /bin/csh -f
+
+grep '#' pha.dat | sed -e 's/#//' | sed -e 's/E//' | sed -e 's/0 ddct//' | sed -e 's/L//' > cat
+
+awk '{print $NF}' cat > newids
+
+#awk '/#/{print substr($0,2,86)}' ncsn.pha.all > cat.tmp
+#grep '#' ncsn.pha.all | sed -e 's/#//' | sed -e 's/E//' | sed -e 's/0 ddct//' | sed -e 's/L//' > cat.tmp
+
+#cat mseed/*/newids | sort | sort -mu > newids

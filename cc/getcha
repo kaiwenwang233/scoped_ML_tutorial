@@ -1,0 +1,15 @@
+#! /bin/csh -f
+
+cd /data/hy73/kw2988/LCSN/cuts
+
+
+
+foreach s (`cat /data/hy73/dschaff/2024.NJ.M4.8/allstas`)
+
+ls $s | awk 'BEGIN{FS="."}{print $NF}' | sort | sort -mu >> chas
+
+cat chas |  sort | sort -mu > /data/hy73/dschaff/2024.NJ.M4.8/chas
+
+end
+
+

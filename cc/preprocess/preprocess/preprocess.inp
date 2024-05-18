@@ -1,0 +1,6 @@
+* swap bytes flag (1: yes, 0: no)
+  1
+* error log file
+  /data/hy1/dschaff/nocal/log/preprocess1.log
+* new stations to preprocess
+  /data/ch1/dschaff/nocal/programs/preprocess/preprocess/runs/stas1

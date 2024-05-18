@@ -27,6 +27,9 @@ RUN apt update -y && \
     cd /app/hypoInv/source && \
     make
 
+RUN pip install torch torchvision
+# RUN pip install install torch==1.11.0+cpu torchvision==0.12.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
+
 RUN cd /app && \
     git clone http://github.com/fwaldhauser/HypoDD.git && \
     cd HypoDD && \
@@ -37,6 +40,15 @@ RUN cd /app && \
     cp hypoDD/hypoDD /usr/bin/ && \
     cp hista2ddsta/hista2ddsta /usr/bin/ && \
     mv /app/HypoDD /app/hypodd/source 
+
+# RUN cd /app && \
+#     cd HypoDD && \
+#     cd src && \
+#     make all && \
+#     cp ph2dt/ph2dt /usr/bin/ && \
+#     cp hypoDD/hypoDD /usr/bin/ && \
+#     cp hista2ddsta/hista2ddsta /usr/bin/ && \
+#     mv /app/HypoDD /app/hypodd/source 
 
 USER root
 # add all the stuff to change permissions

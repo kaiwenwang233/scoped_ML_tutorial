@@ -1,0 +1,51 @@
+CMD	= pairs9
+CMD	= correl9axial
+CC	= gcc
+FC      = gfortran
+#FC	= f77
+#FC	= pgf77
+SRCS	= $(CMD).f \
+	  crosscorr2.f freeunit.f indexmap.f  resample.f \
+          swap.f findsac2.f ifindi.f indexxi.f parsedot.f readsac.f \
+          sac.f winalign.f xcorrf.f detector2.f \
+	  apply.f beroots.f bilin2.f buroots.f cutoffs.f design.f \
+	  readmseed.f codecoutil.f datumd.f mseed_io.f \
+          iirfilt.f lptbp.f lptbr.f lpthp.f warp.f lp.f
+CSRCS	= 
+OBJS	= $(SRCS:%.f=%.o) $(CSRCS:%.c=%.o)
+INCLDIR	= .
+CFLAGS	= -O -I$(INCLDIR)
+
+# Flags for GNU g77 compiler
+#FFLAGS	= -O -I$(INCLDIR) -fno-silent -Wall -implicit
+
+# Flags for SUN f77 compiler (hypo)
+FFLAGS	= -O -I$(INCLDIR)
+
+# Flags for chuppah gfortran compiler
+FFLAGS	= -O -I$(INCLDIR) -fno-range-check
+
+# Following line needed on HP-UX (hasn't been tested, though).
+#LDFLAGS	= +U77
+
+all: $(CMD)
+
+$(CMD): $(OBJS)
+	$(FC) $(LDFLAGS) $(OBJS) $(LIBS) -o $@
+
+%.o: %.f
+	$(FC) $(FFLAGS) -c $(@F:.o=.f) -o $@
+
+# Extensive lint-like diagnostic listing (SUN f77 only)
+hypoDD.lst: $(SRCS)
+	f77 -e -Xlist -c $(SRCS)
+
+clean:
+	-rm -f $(CMD) *.o core a.out *.fln junk
+
+# Include-file dependencies
+
+correl.o	: $(INCLDIR)/correl.inc
+findsac.o	: $(INCLDIR)/correl.inc
+readinp.o	: $(INCLDIR)/correl.inc
+readsac.o	: $(INCLDIR)/correl.inc
