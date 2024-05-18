@@ -52,7 +52,8 @@ RUN cd /app/cc/amatrice/preprocess/preprocess && \
     cp Makefile.amatrice.Swaves Makefile && \
     make && \
     cd ../runs && \
-    cc -o select5 select5.c -lm
+    cc -o select5 select5.c -lm && \
+    apt install csh
 
 USER root
 # add all the stuff to change permissions
