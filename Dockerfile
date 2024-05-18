@@ -41,12 +41,12 @@ RUN cd /app && \
     cp hista2ddsta/hista2ddsta /usr/bin/ && \
     mv /app/HypoDD /app/hypodd/source 
 
-RUN cd /app/cc/preprocess/preprocess && \
+RUN cd /app/cc/amatrice/preprocess/preprocess && \
     cp Makefile.Pwaves Makefile && \
     make && \
     cp Makefile.Swaves Makefile && \
-    make && \
-    cd ../../correl/correl && \
+    make 
+RUN cd /app/cc/amatrice/correl/correl && \
     cp Makefile.amatrice.Pwaves Makefile && \
     make && \
     cp Makefile.amatrice.Swaves Makefile && \

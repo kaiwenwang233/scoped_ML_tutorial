@@ -1,0 +1,36 @@
+#! /bin/csh -f
+
+# nohup ./runselect5s.ehn > & out &
+
+#cd /data/ch1/dschaff/parkfield/corr/corrP
+#cd /data/ch1/dschaff/parkfield/corr/corrS.DP2
+#cd /data/ch1/dschaff/parkfield/corr/corrS.DP3
+
+#cd /data/hy73/dschaff/2024.NJ.M4.8/corr/run1/cc
+
+cd /app/cc/amatrice/corr/corr.Pwaves
+mkdir select
+
+foreach f (*.cc*)
+
+echo $f
+/app/cc/amatrice/correl/runs/select5 $f
+mv select.out select/"$f"
+
+date
+
+end
+
+cd /app/cc/amatrice/corr/corr.Swaves
+mkdir select
+
+foreach f (*.cc*)
+
+echo $f
+/app/cc/amatrice/correl/runs/select5 $f
+mv select.out select/"$f"
+
+date
+
+end
+

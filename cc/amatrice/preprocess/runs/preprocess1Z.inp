@@ -1,0 +1,6 @@
+* swap bytes flag (1: yes, 0: no)
+  1
+* error log.Z file
+  "/app/cc/amatrice/preprocess/runs/preprocess1.logZ"
+* new stations to preprocess
+  "/app/cc/amatrice/allstas"

@@ -1,0 +1,57 @@
+#! /bin/csh -f
+
+# nohup ./runcorrel9.EHN updatenum stanum > & out1 &
+
+
+foreach netsta (`cat /app/cc/amatrice/allstas `)
+
+foreach cha (`cat /app/cc/amatrice/chasZ`)
+
+#cd /data/hy72/dschaff/axial/update
+
+#cp axial.cat.all.$1 ../axial.cat.all
+
+#cd /data/ch1/dschaff/parkfield/sac2/
+#cd /data/hy73/kw2988/LCSN/cuts
+cd /app/cc/cuts/
+
+date
+
+echo $netsta
+echo $netsta > $netsta.sta
+
+cd $netsta
+ls *$cha.hdr | sed -e 's/.hdr//' > mseedfiles 
+awk 'BEGIN{FS="."}{print $1}' mseedfiles > ids
+cp ids newids
+cd ..
+
+
+/app/cc/amatrice/correl/correl/correl9amatrice.Pwaves <<eof 
+'/app/cc/amatrice/cat'
+"$netsta.sta"
+"$netsta.cc.$cha.P"
+"$netsta.log.$cha.P"
+"$netsta/ids"
+"$netsta/newids"
+eof
+
+
+end
+
+date
+
+end
+
+mkdir /app/cc/amatrice/corr
+mkdir /app/cc/amatrice/corr/corr.Pwaves
+mv *.P /app/cc/amatrice/corr/corr.Pwaves
+
+#mv $netsta.cc.$cha $netsta.log.$cha /data/ch1/dschaff/parkfield/corr/corrP 
+
+
+#rm $netsta.sta
+
+
+
+
