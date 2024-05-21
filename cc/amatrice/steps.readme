@@ -49,6 +49,7 @@ cd /app/cc/amatrice
 ./getcat
 
 cd preprocess/runs
+rm outZ outE outN
 ./runpreprocess.chasZ > & outZ &
 ./runpreprocess.chasH > & outH &
 
