@@ -1,0 +1,16 @@
+# convcc.sh: convert correl output files to hypoDD input file
+# see header of convcc.sh for description.
+#
+# to run this scoped toy problem:
+# copy phase files for OT correction:
+cp /data/hy73/dschaff/scoped/amatrice/pha.dat pha.all.cc
+cp ../picks/pha.all .
+./convcc.sh ./orig pha.all.cc pha.all 5 
+
+# note: if same phase files are used for cc and picks inversion 
+./convcc.sh ./orig - - 5 
+
+
+
+
+

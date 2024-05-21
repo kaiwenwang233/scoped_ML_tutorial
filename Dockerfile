@@ -55,6 +55,11 @@ RUN cd /app/cc/amatrice/preprocess/preprocess && \
     cc -o select5 select5.c -lm && \
     apt install csh
 
+RUN cd /app/cc/convcc && \
+    gfortran add_nphaPS.f -o add_nphaPS && \
+    gfortran OTcorr.f -o OTcorr && \
+    gfortran reformat_dtcc_sorted.f -o reformat_dtcc_sorted
+
 USER root
 # add all the stuff to change permissions
 RUN mkdir ~/.local && \
